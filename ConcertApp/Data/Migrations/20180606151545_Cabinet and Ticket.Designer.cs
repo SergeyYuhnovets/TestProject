@@ -12,9 +12,10 @@ using System;
 namespace ConcertApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180606151545_Cabinet and Ticket")]
+    partial class CabinetandTicket
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -151,15 +152,11 @@ namespace ConcertApp.Data.Migrations
 
                     b.Property<int?>("CabinetID");
 
-                    b.Property<int>("ConcertEventID");
-
                     b.Property<bool>("IsBought");
 
                     b.HasKey("ID");
 
                     b.HasIndex("CabinetID");
-
-                    b.HasIndex("ConcertEventID");
 
                     b.ToTable("Tickets");
                 });
@@ -343,11 +340,6 @@ namespace ConcertApp.Data.Migrations
                     b.HasOne("ConcertApp.Models.Cabinet", "Cabinet")
                         .WithMany("Tickets")
                         .HasForeignKey("CabinetID");
-
-                    b.HasOne("ConcertApp.Models.ConcertEvent", "ConcertEvent")
-                        .WithMany()
-                        .HasForeignKey("ConcertEventID")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

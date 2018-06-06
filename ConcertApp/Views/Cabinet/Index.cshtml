@@ -1,0 +1,24 @@
+﻿@model ConcertApp.Models.CabinetViewModels.TicketsViewModel
+
+@{
+    ViewData["Title"] = "Your tickets";
+}
+
+<h2>Your tickets</h2>
+
+<table class="table">
+    <tbody>
+        @foreach (var item in Model.BoughtTickets) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsBought)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

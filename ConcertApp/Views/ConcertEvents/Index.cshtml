@@ -98,14 +98,15 @@
                     @Html.DisplayFor(modelItem => item.Location.Name)
                 </td>
                 <td>
+                    @*its better to delete admin fields. admin already has his controller to edit entities*@
                     @if (Model.IsAdmin)
                     {
-                        < a asp-action = "Edit" asp-route-id = "@item.ID" > Edit </ a > <span>|</span>
+                        <a asp-action = "Edit" asp-route-id = "@item.ID" > Edit </a> <span>|</span>
                     }
                     <a asp-action="Details" asp-route-id="@item.ID">Details</a>
                     @if (Model.IsAdmin)
                     {
-                        <span>|</span> < a asp-action = "Delete" asp-route-id = "@item.ID" > Delete </ a >
+                        <span>|</span> <a asp-action = "Delete" asp-route-id = "@item.ID" > Delete </a>
                     }
                 </td>
             </tr>

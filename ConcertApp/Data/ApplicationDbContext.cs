@@ -18,6 +18,9 @@ namespace ConcertApp.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<Cabinet>()
+                .HasMany(c => c.Tickets)
+                .WithOne(t => t.Cabinet);
         }
 
         public DbSet<ClassicConcert> ClassicConcert { get; set; }
@@ -27,5 +30,7 @@ namespace ConcertApp.Data
         public DbSet<Location> Location { get; set; }
         public DbSet<VocalType> VocalType { get; set; }
         public DbSet<ConcertEvent> ConcertEvent { get; set; }
+        public DbSet<Cabinet> Cabinets { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
     }
 }
