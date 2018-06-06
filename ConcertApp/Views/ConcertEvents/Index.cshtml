@@ -1,0 +1,114 @@
+﻿@model ConcertApp.Models.ConcertEventViewModels.FilterConcerts
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-md-5 form-group">
+            <label asp-for="NameFilter" class="control-label"></label>
+        </div>
+        <div class="col-md-5 form-group">
+            <label asp-for="TypeFilter" class="control-label"></label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5 form-group">
+            <input asp-for="NameFilter" class="form-control" />
+            <span asp-validation-for="NameFilter" class="text-danger"></span>
+        </div>
+        <div class="col-md-5 form-group">
+            <select asp-for="TypeFilter" class="form-control">
+                @foreach (var type in Model.AvailableTypes)
+                {
+                    if ((int)(ViewData["active"]) == type.ID)
+                    {
+                        <option selected>
+                            @Html.DisplayFor(modelItem => type.Name)
+                        </option>
+                    }
+                    else
+                    {
+                        <option>
+                            @Html.DisplayFor(modelItem => type.Name)
+                        </option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2 form-group">
+            <input type="submit" value="Filter" class="btn btn-default" />
+        </div>
+    </div>
+    <br />
+</form>
+
+<p>
+    <a asp-action="Map">Map</a>
+</p><br/>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ConcertEvents[0].Musician)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConcertEvents[0].Tickets)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConcertEvents[0].Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConcertEvents[0].Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConcertEvents[0].EventType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConcertEvents[0].Location)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ConcertEvents)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Musician)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tickets)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EventType.ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Location.Name)
+                </td>
+                <td>
+                    @if (Model.IsAdmin)
+                    {
+                        < a asp-action = "Edit" asp-route-id = "@item.ID" > Edit </ a > <span>|</span>
+                    }
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a>
+                    @if (Model.IsAdmin)
+                    {
+                        <span>|</span> < a asp-action = "Delete" asp-route-id = "@item.ID" > Delete </ a >
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

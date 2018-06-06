@@ -1,0 +1,57 @@
+﻿
+@{
+    ViewData["Title"] = "MapView";
+}
+
+<style>
+    #map {
+        height: 400px;
+        width: 100%;
+    }
+</style>
+<h2>MapView</h2>
+
+<div id="map"></div>
+<script>
+    function initMap() {
+        $.ajax({
+            type: "GET",
+            url: "/ConcertEvents/GetCoords",
+            contentType: "application/json",
+            dataType: "json",
+            success: function (response) {
+                for (var i = 0; i < response.length; i++) {
+                    addMarker(response[i]);
+                }
+            },
+            failure: function (response) {
+                alert(response);
+            }
+        });
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 6,
+            center: { lat: 54, lng: 27 }
+        });
+        function addMarker(event) {
+            var location = event.location;
+            var infostring = '<b>' + location.name + '</b>' + '<br/>' +
+                event.musician;
+            var infowindow = new google.maps.InfoWindow({
+                content: infostring
+            });
+            var lati = parseFloat(location.latitude);
+            var lngi = parseFloat(location.longitude);
+            var marker = new google.maps.Marker({
+                position: { lat: lati, lng: lngi },
+                map: map,
+                title: location.name
+            });
+            marker.addListener('click', function () {
+                infowindow.open(map, marker);
+            })
+        }
+      }
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBNkSVXTbJY03ij94JIu2_PRcafu_v8zZs&callback=initMap">
+</script>

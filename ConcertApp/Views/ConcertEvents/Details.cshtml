@@ -1,0 +1,79 @@
+﻿@model ConcertApp.Models.ConcertEvent
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+        <h4>ConcertEvent</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Musician)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Musician)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Tickets)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Tickets)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Date)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Date)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Price)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Price)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.EventType)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.EventType.ID)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Location)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Location.Name)
+            </dd>
+                @if (Model.EventTypeID == 1)
+                {
+                    @Html.Partial("Classic")
+                }
+                else if (Model.EventTypeID == 2)
+                {
+                    @Html.Partial("Party")
+                }
+                else if (Model.EventTypeID == 3)
+                {
+                    @Html.Partial("OpenAir")
+                }
+            </dl>
+    </div>
+<form method="post">
+    <div class="row">
+        <input asp-route-id="@Model.ID" asp-route-button="buy" type="submit" value="Buy Ticket" class="btn btn-default" />
+        <input asp-route-id="@Model.ID" asp-route-button="book" type="submit" value="Book Ticket" class="btn btn-default" />
+    </div>
+    @if ((bool)(ViewData["TicketsError"]))
+    {
+        <div class="row">
+            <p>No more tickets. You are late. Sorry :(</p>
+        </div>
+    }
+
+</form>
+<br />
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

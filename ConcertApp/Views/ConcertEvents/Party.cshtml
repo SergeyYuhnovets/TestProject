@@ -1,0 +1,14 @@
+﻿@*@model NoMVC.Pages.Events.DetailsModel
+    @using NoMVC.Models*@
+
+@model ConcertApp.Models.ConcertEvent
+@using ConcertApp.Models
+
+<dt>
+    @*@Html.DisplayNameFor(model => ((Party)model.ConcertEvent).MinimumAge)*@
+    @Html.DisplayNameFor(model => ((Party)model).MinimumAge)
+</dt>
+<dd>
+    @*@Html.DisplayFor(model => ((Party)model.ConcertEvent).MinimumAge)*@
+    @Html.DisplayFor(model => ((Party)model).MinimumAge)
+</dd>
