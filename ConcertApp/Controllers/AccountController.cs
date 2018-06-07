@@ -212,7 +212,7 @@ namespace ConcertApp.Controllers
         public IActionResult Register(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            createRolesandUsers();
+            CreateRolesandUsers();
             return View();
         }
 
@@ -235,6 +235,14 @@ namespace ConcertApp.Controllers
                     await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
+                    bool x = await _roleManager.RoleExistsAsync("User");
+                    if (!x)
+                    {
+                        IdentityRole role = new IdentityRole();
+                        role.Name = "User";
+                        await _roleManager.CreateAsync(role);
+                    }
+                    IdentityResult result1 = await _userManager.AddToRoleAsync(user, "User");
                     _logger.LogInformation("User created a new account with password.");
                     return RedirectToLocal(returnUrl);
                 }
@@ -441,7 +449,7 @@ namespace ConcertApp.Controllers
             return View();
         }
 
-        private async Task createRolesandUsers()
+        private async Task CreateRolesandUsers()
         {
 
             bool x = await _roleManager.RoleExistsAsync("Admin");

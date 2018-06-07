@@ -13,7 +13,7 @@ namespace ConcertApp.Controllers
 {
     public class CabinetController : Controller
     {
-        private TicketDbService TicketService;
+        private readonly TicketDbService TicketService;
         private readonly UserManager<ApplicationUser> UserManager;
 
         public CabinetController(UserManager<ApplicationUser> userManager,
@@ -28,7 +28,7 @@ namespace ConcertApp.Controllers
             string UserID = UserManager.GetUserId(User);
             IList<Ticket> BoughtTickets = TicketService.GetBoughtTickets(UserID).Result;
             IList<Ticket> BookedTickets = TicketService.GetBookedTickets(UserID).Result;
-            var model = new TicketsViewModel
+            TicketsViewModel model = new TicketsViewModel
             {
                 BoughtTickets = BoughtTickets,
                 BookedTickets = BookedTickets

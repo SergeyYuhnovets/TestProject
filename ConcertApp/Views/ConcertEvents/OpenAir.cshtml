@@ -1,21 +1,15 @@
-﻿@*@model NoMVC.Pages.Events.DetailsModel*@
-@model ConcertApp.Models.ConcertEvent
-@*@using NoMVC.Models*@
+﻿@model ConcertApp.Models.ConcertEventViewModels.DetailsViewModel
 @using ConcertApp.Models
 
 <dt>
-    @*@Html.DisplayNameFor(model => ((OpenAir)model.ConcertEvent).HowToGet)*@
-    @Html.DisplayNameFor(model => ((OpenAir)model).HowToGet)
+    @Html.DisplayNameFor(model => ((OpenAir)model.ConcertEvent).HowToGet)
 </dt>
 <dd>
-    @*@Html.DisplayFor(model => ((OpenAir)model.ConcertEvent).HowToGet)*@
-    @Html.DisplayFor(model => ((OpenAir)model).HowToGet)
+    @Html.DisplayFor(model => ((OpenAir)model.ConcertEvent).HowToGet)
 </dd>
 <dt>
-    @*@Html.DisplayNameFor(model => ((OpenAir)model.ConcertEvent).Headliner)*@
-    @Html.DisplayNameFor(model => ((OpenAir)model).Headliner)
+    @Html.DisplayNameFor(model => ((OpenAir)model.ConcertEvent).Headliner)
 </dt>
 <dd>
-    @*@Html.DisplayFor(model => ((OpenAir)model.ConcertEvent).Headliner)*@
-    @Html.DisplayFor(model => ((OpenAir)model).Headliner)
+    @Html.DisplayFor(model => ((OpenAir)model.ConcertEvent).Headliner)
 </dd>

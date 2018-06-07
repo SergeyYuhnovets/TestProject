@@ -11,19 +11,26 @@ using ConcertApp.Services;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using ConcertApp.Models.ConcertEventViewModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace ConcertApp.Controllers
 {
-    [Authorize(Policy = "AdminOnly")]
     public class ConcertEventsController : Controller
     {
-        private EventTypeDbService EventTypeService;
-        private EventDbService EventService;
+        private readonly EventTypeDbService EventTypeService;
+        private readonly EventDbService EventService;
+        private readonly TicketDbService TicketService;
+        private readonly CabinetDbService CabinetService;
+        private readonly UserManager<ApplicationUser> UserManager;
 
-        public ConcertEventsController(ApplicationDbContext context)
+        public ConcertEventsController(UserManager<ApplicationUser> userManager,
+                                        ApplicationDbContext context)
         {
+            UserManager = userManager;
             EventTypeService = new EventTypeDbService(context);
             EventService = new EventDbService(context);
+            TicketService = new TicketDbService(context);
+            CabinetService = new CabinetDbService(context);
         }
 
         public IList<ConcertEvent> ConcertEvents { get; set; }
@@ -33,6 +40,9 @@ namespace ConcertApp.Controllers
         [BindProperty]
         [Display(Name = "Event Type")]
         public string TypeFilter { get; set; }
+        [BindProperty]
+        [Range(1, 10)]
+        public int Quantity { get; set; }
         [BindProperty]
         public IList<EventType> AvailableTypes { get; set; }
 
@@ -54,7 +64,7 @@ namespace ConcertApp.Controllers
                 TypeFilter = TypeFilter,
                 AvailableTypes = AvailableTypes,
                 IsAdmin = User.IsInRole("Admin")
-        };
+            };
 
             return View(model);
         }
@@ -68,7 +78,7 @@ namespace ConcertApp.Controllers
             AvailableTypes = EventTypeService.GetEventTypes().Result;
             ViewData["active"] = EventTypeService.GetActiveComboItemIndex(TypeFilter);
 
-            var model = new FilterConcerts
+            FilterConcerts model = new FilterConcerts
             {
                 ConcertEvents = ConcertEvents,
                 NameFilter = NameFilter,
@@ -100,18 +110,20 @@ namespace ConcertApp.Controllers
                 NotFound();
             }
 
-            return View(ConcertEvent);
+            DetailsViewModel model = new DetailsViewModel
+            {
+                ConcertEvent = ConcertEvent,
+                Quantity = Quantity
+            };
+
+            return View(model);
         }
 
-        [HttpPost, ActionName("Details")]
-        [AllowAnonymous]
-        public IActionResult BuyOrBook(int? id, string button)
-        {
-            if (id == null)
-            {
-                NotFound();
-            }
 
+        [HttpPost]
+        [Authorize("UserOnly")]
+        public IActionResult Buy(int id, DetailsViewModel model)
+        {
             DefineConcert(id);
 
             if (ConcertEvent == null)
@@ -119,46 +131,79 @@ namespace ConcertApp.Controllers
                 NotFound();
             }
 
-            // @TODO separate buying and booking logic
-            if (button == "buy")
+            ViewData["TicketsError"] = false;
+
+            if (ConcertEvent.Tickets - model.Quantity >= 0)
             {
-                if (ConcertEvent.Tickets > 0)
-                {
-                    EventService.BuyTicket(ConcertEvent);
-                    ViewData["TicketsError"] = false;
-                }
-                else
-                {
-                    ViewData["TicketsError"] = true;
-                }
-
-                // @TODO add page
-                return View(ConcertEvent);
+                BuyTickets(ConcertEvent, model.Quantity);
             }
-            else if (button == "book")
+            else
             {
-                if (ConcertEvent.Tickets > 0)
-                {
-                    EventService.BuyTicket(ConcertEvent);
-                    ViewData["TicketsError"] = false;
-
-                    EmailSender emailer = new EmailSender();
-                    string Email = User.Identity. Name; //@TODO get real email
-                    //string Email = "njnjnj1@dispostable.com"; //@TODO login++
-                    string Subject = "Your booking confirmation";
-                    string Message = "You are just booked a ticket to the concert"; //@TODO beautify message
-                    emailer.SendEmail(Email, Subject, Message);
-                }
-                else
-                {
-                    ViewData["TicketsError"] = true;
-                }
-
-                // @TODO add page
-                return View(ConcertEvent);
+                ViewData["TicketsError"] = true;
             }
+
             // @TODO add page
-            return Redirect("/Index");
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize("UserOnly")]
+        public IActionResult Book(int id, DetailsViewModel model)
+        {
+            DefineConcert(id);
+
+            if (ConcertEvent == null)
+            {
+                NotFound();
+            }
+
+            ViewData["TicketsError"] = false;
+
+            if (ConcertEvent.Tickets - model.Quantity >= 0)
+            {
+                BuyTickets(ConcertEvent);
+
+                EmailSender emailer = new EmailSender();
+                string Email = User.Identity.Name; //@TODO get real email
+                string Subject = "Your booking confirmation";
+                string Message = "You are just booked a ticket to the concert"; //@TODO beautify message
+                emailer.SendEmail(Email, Subject, Message);
+            }
+            else
+            {
+                ViewData["TicketsError"] = true;
+            }
+
+            // @TODO add page
+            return View(model);
+        }
+
+        private void BuyTickets(ConcertEvent concert, int quantity=1)
+        {
+            EventService.BuyTickets(concert, quantity);
+            var user = UserManager.GetUserId(User);
+            Cabinet cabinet = CabinetService.GetCabinet(user); //@TODO null?
+            Ticket ticket = new Ticket
+            {
+                IsBought = true,
+                Cabinet = cabinet,
+                ConcertEvent = concert
+            };
+            TicketService.CreateTicket(ticket);
+        }
+
+        private void BookTickets(ConcertEvent concert)
+        {
+            EventService.BuyTickets(concert);
+            var user = UserManager.GetUserId(User);
+            Cabinet cabinet = CabinetService.GetCabinet(user); //@TODO null?
+            Ticket ticket = new Ticket
+            {
+                IsBought = false,
+                Cabinet = cabinet,
+                ConcertEvent = concert
+            };
+            TicketService.CreateTicket(ticket);
         }
 
         private void DefineConcert(int? id)

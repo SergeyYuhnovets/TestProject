@@ -32,5 +32,11 @@ namespace ConcertApp.Services
                 .Where(t => t.IsBought == false && t.Cabinet.UserID == UserID)
                 .ToListAsync();
         }
+
+        public async void CreateTicket(Ticket Ticket)
+        {
+            _context.Add(Ticket);
+            await _context.SaveChangesAsync();
+        }
     }
 }

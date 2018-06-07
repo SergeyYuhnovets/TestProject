@@ -53,9 +53,9 @@ namespace ConcertApp.Services
                 .ToListAsync();
         }
 
-        public void BuyTicket(ConcertEvent concert)
+        public void BuyTickets(ConcertEvent concert, int quantity=1)
         {
-            concert.Tickets -= 1;
+            concert.Tickets -= quantity;
             _context.ConcertEvent.Update(concert);
             _context.SaveChanges();
         }

@@ -1,4 +1,4 @@
-﻿@model ConcertApp.Models.ConcertEvent
+﻿@model ConcertApp.Models.ConcertEventViewModels.DetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -7,54 +7,53 @@
 <h2>Details</h2>
 
 <div>
-        <h4>ConcertEvent</h4>
         <hr />
         <dl class="dl-horizontal">
             <dt>
-                @Html.DisplayNameFor(model => model.Musician)
+                @Html.DisplayNameFor(model => model.ConcertEvent.Musician)
             </dt>
             <dd>
-                @Html.DisplayFor(model => model.Musician)
+                @Html.DisplayFor(model => model.ConcertEvent.Musician)
             </dd>
             <dt>
-                @Html.DisplayNameFor(model => model.Tickets)
+                @Html.DisplayNameFor(model => model.ConcertEvent.Tickets)
             </dt>
             <dd>
-                @Html.DisplayFor(model => model.Tickets)
+                @Html.DisplayFor(model => model.ConcertEvent.Tickets)
             </dd>
             <dt>
-                @Html.DisplayNameFor(model => model.Date)
+                @Html.DisplayNameFor(model => model.ConcertEvent.Date)
             </dt>
             <dd>
-                @Html.DisplayFor(model => model.Date)
+                @Html.DisplayFor(model => model.ConcertEvent.Date)
             </dd>
             <dt>
-                @Html.DisplayNameFor(model => model.Price)
+                @Html.DisplayNameFor(model => model.ConcertEvent.Price)
             </dt>
             <dd>
-                @Html.DisplayFor(model => model.Price)
+                @Html.DisplayFor(model => model.ConcertEvent.Price)
             </dd>
             <dt>
-                @Html.DisplayNameFor(model => model.EventType)
+                @Html.DisplayNameFor(model => model.ConcertEvent.EventType)
             </dt>
             <dd>
-                @Html.DisplayFor(model => model.EventType.ID)
+                @Html.DisplayFor(model => model.ConcertEvent.EventType.ID)
             </dd>
             <dt>
-                @Html.DisplayNameFor(model => model.Location)
+                @Html.DisplayNameFor(model => model.ConcertEvent.Location)
             </dt>
             <dd>
-                @Html.DisplayFor(model => model.Location.Name)
+                @Html.DisplayFor(model => model.ConcertEvent.Location.Name)
             </dd>
-                @if (Model.EventTypeID == 1)
+                @if (Model.ConcertEvent.EventTypeID == 1)
                 {
                     @Html.Partial("Classic")
                 }
-                else if (Model.EventTypeID == 2)
+                else if (Model.ConcertEvent.EventTypeID == 2)
                 {
                     @Html.Partial("Party")
                 }
-                else if (Model.EventTypeID == 3)
+                else if (Model.ConcertEvent.EventTypeID == 3)
                 {
                     @Html.Partial("OpenAir")
                 }
@@ -62,8 +61,13 @@
     </div>
 <form method="post">
     <div class="row">
-        <input asp-route-id="@Model.ID" asp-route-button="buy" type="submit" value="Buy Ticket" class="btn btn-default" />
-        <input asp-route-id="@Model.ID" asp-route-button="book" type="submit" value="Book Ticket" class="btn btn-default" />
+        <label asp-for="@Model.Quantity" class="control-label" @*style="width:100px; height:30px"*@></label>
+        <input asp-for="@Model.Quantity" class="form-control" @*style="width:100px; height:30px"*@/>
+        <span asp-validation-for="@Model.Quantity" class="text-danger"></span>
+    </div>
+    <div class="row">
+        <input asp-route-id="@Model.ConcertEvent.ID" asp-action="buy" asp-route-button="buy" type="submit" value="Buy Ticket" class="btn btn-default" />
+        <input asp-route-id="@Model.ConcertEvent.ID" asp-action="book" asp-route-button="book" type="submit" value="Book Ticket" class="btn btn-default" />
     </div>
     @if ((bool)(ViewData["TicketsError"]))
     {

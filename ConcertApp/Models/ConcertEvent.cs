@@ -12,7 +12,7 @@ namespace ConcertApp.Models
         public string Musician { get; set; }
         public int Tickets { get; set; }
         [DataType(DataType.Date)] //?
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
         public DateTime Date { get; set; }
         public Location Location { get; set; }
         public int LocationID { get; set; }

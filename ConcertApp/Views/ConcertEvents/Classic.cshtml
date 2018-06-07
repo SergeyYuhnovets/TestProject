@@ -1,21 +1,21 @@
-﻿@model ConcertApp.Models.ConcertEvent
+﻿@model ConcertApp.Models.ConcertEventViewModels.DetailsViewModel
 @using ConcertApp.Models
 
 <dt>
-    @Html.DisplayNameFor(model => ((ClassicConcert)model).VocalType)
+    @Html.DisplayNameFor(model => ((ClassicConcert)model.ConcertEvent).VocalType)
 </dt>
 <dd>
-    @Html.DisplayFor(model => ((ClassicConcert)model).VocalType.Name)
+    @Html.DisplayFor(model => ((ClassicConcert)model.ConcertEvent).VocalType.Name)
 </dd>
 <dt>
-    @Html.DisplayNameFor(model => ((ClassicConcert)model).Composer)
+    @Html.DisplayNameFor(model => ((ClassicConcert)model.ConcertEvent).Composer)
 </dt>
 <dd>
-    @Html.DisplayFor(model => ((ClassicConcert)model).Composer)
+    @Html.DisplayFor(model => ((ClassicConcert)model.ConcertEvent).Composer)
 </dd>
 <dt>
-    @Html.DisplayNameFor(model => ((ClassicConcert)model).Name)
+    @Html.DisplayNameFor(model => ((ClassicConcert)model.ConcertEvent).Name)
 </dt>
 <dd>
-    @Html.DisplayFor(model => ((ClassicConcert)model).Name)
+    @Html.DisplayFor(model => ((ClassicConcert)model.ConcertEvent).Name)
 </dd>
