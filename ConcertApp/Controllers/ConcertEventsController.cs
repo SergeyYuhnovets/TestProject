@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ConcertApp.Controllers
 {
+    [Authorize("AdminOnly")]
     public class ConcertEventsController : Controller
     {
         private readonly EventTypeDbService EventTypeService;
@@ -96,7 +97,7 @@ namespace ConcertApp.Controllers
         {
             if (id == null)
             {
-                NotFound();
+                return NotFound();
             }
             ViewData["TicketsError"] = false;
 
@@ -107,7 +108,7 @@ namespace ConcertApp.Controllers
 
             if (ConcertEvent == null)
             {
-                NotFound();
+                return NotFound();
             }
 
             DetailsViewModel model = new DetailsViewModel
@@ -120,9 +121,11 @@ namespace ConcertApp.Controllers
         }
 
 
+
         [HttpPost]
-        [Authorize("UserOnly")]
-        public IActionResult Buy(int id, DetailsViewModel model)
+        //[Authorize("UserOnly")]   //why not work?
+        [AllowAnonymous]
+        public IActionResult Buy(int id)
         {
             DefineConcert(id);
 
@@ -133,22 +136,29 @@ namespace ConcertApp.Controllers
 
             ViewData["TicketsError"] = false;
 
-            if (ConcertEvent.Tickets - model.Quantity >= 0)
+            if (ConcertEvent.Tickets - Quantity >= 0)
             {
-                BuyTickets(ConcertEvent, model.Quantity);
+                BuyTickets(ConcertEvent, Quantity);
             }
             else
             {
                 ViewData["TicketsError"] = true;
             }
 
+            DetailsViewModel model = new DetailsViewModel
+            {
+                ConcertEvent = ConcertEvent,
+                Quantity = Quantity
+            };
+
             // @TODO add page
-            return View(model);
+            return View("Details", model);
         }
 
         [HttpPost]
-        [Authorize("UserOnly")]
-        public IActionResult Book(int id, DetailsViewModel model)
+        //[Authorize("UserOnly")]   //why not work?
+        [AllowAnonymous]
+        public IActionResult Book(int id)
         {
             DefineConcert(id);
 
@@ -159,14 +169,15 @@ namespace ConcertApp.Controllers
 
             ViewData["TicketsError"] = false;
 
-            if (ConcertEvent.Tickets - model.Quantity >= 0)
+            if (ConcertEvent.Tickets - Quantity >= 0)
             {
                 BuyTickets(ConcertEvent);
 
                 EmailSender emailer = new EmailSender();
                 string Email = User.Identity.Name; //@TODO get real email
                 string Subject = "Your booking confirmation";
-                string Message = "You are just booked a ticket to the concert"; //@TODO beautify message
+                string Message = String.Format("You just booked a ticket to {0}. Date: {1}. Location: {2}",
+                    ConcertEvent.Musician, ConcertEvent.Date, ConcertEvent.Location.Name);
                 emailer.SendEmail(Email, Subject, Message);
             }
             else
@@ -174,15 +185,21 @@ namespace ConcertApp.Controllers
                 ViewData["TicketsError"] = true;
             }
 
+            DetailsViewModel model = new DetailsViewModel
+            {
+                ConcertEvent = ConcertEvent,
+                Quantity = Quantity
+            };
+
             // @TODO add page
-            return View(model);
+            return View("Details", model);
         }
 
         private void BuyTickets(ConcertEvent concert, int quantity=1)
         {
             EventService.BuyTickets(concert, quantity);
-            var user = UserManager.GetUserId(User);
-            Cabinet cabinet = CabinetService.GetCabinet(user); //@TODO null?
+            string userID = UserManager.GetUserId(User);
+            Cabinet cabinet = CabinetService.GetCabinet(userID); //@TODO null?
             Ticket ticket = new Ticket
             {
                 IsBought = true,

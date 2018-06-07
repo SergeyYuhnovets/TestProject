@@ -20,7 +20,7 @@ namespace ConcertApp.Services
         public async Task<IList<Ticket>> GetBoughtTickets(string UserID)
         {
             return await _context.Tickets
-                .Include(t => t.Cabinet)
+                .Include(t => t.Cabinet).Include(t => t.ConcertEvent)
                 .Where(t => t.IsBought == true && t.Cabinet.UserID == UserID)
                 .ToListAsync();
         }
@@ -33,9 +33,9 @@ namespace ConcertApp.Services
                 .ToListAsync();
         }
 
-        public async void CreateTicket(Ticket Ticket)
+        public async void CreateTicket(Ticket ticket)
         {
-            _context.Add(Ticket);
+            _context.Add(ticket);
             await _context.SaveChangesAsync();
         }
     }

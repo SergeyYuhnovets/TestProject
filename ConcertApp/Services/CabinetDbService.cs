@@ -20,5 +20,11 @@ namespace ConcertApp.Services
         {
             return _context.Cabinets.SingleOrDefault(c => c.UserID == UserID);
         }
+
+        public async void CreateCabinet(Cabinet cabinet)
+        {
+            _context.Add(cabinet);
+            await _context.SaveChangesAsync();
+        }
     }
 }

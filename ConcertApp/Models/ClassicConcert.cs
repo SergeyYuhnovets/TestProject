@@ -10,7 +10,7 @@ namespace ConcertApp.Models
     {
         [Display(Name = "Vocal Type")]
         public VocalType VocalType { get; set; }
-        public int VocalTypeID { get; set; }
+        public int? VocalTypeID { get; set; }
         public string Composer { get; set; }
         public string Name { get; set; }
     }

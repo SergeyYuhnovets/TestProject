@@ -13,6 +13,8 @@ using Microsoft.Extensions.Options;
 using ConcertApp.Models;
 using ConcertApp.Models.AccountViewModels;
 using ConcertApp.Services;
+using ConcertApp.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConcertApp.Controllers
 {
@@ -243,6 +245,14 @@ namespace ConcertApp.Controllers
                         await _roleManager.CreateAsync(role);
                     }
                     IdentityResult result1 = await _userManager.AddToRoleAsync(user, "User");
+                    Cabinet cabinet = new Cabinet
+                    {
+                        UserID = user.Id,
+                        Tickets = new List<Ticket>()
+                    };
+                    
+                    //Create cabinet?
+
                     _logger.LogInformation("User created a new account with password.");
                     return RedirectToLocal(returnUrl);
                 }
@@ -455,13 +465,10 @@ namespace ConcertApp.Controllers
             bool x = await _roleManager.RoleExistsAsync("Admin");
             if (!x)
             {
-
                 // first we create Admin rool    
                 var role = new IdentityRole();
                 role.Name = "Admin";
                 await _roleManager.CreateAsync(role);
-
-                //Here we create a Admin super user who will maintain the website                   
 
                 var user = new ApplicationUser();
                 user.UserName = "admin@cat.com";
